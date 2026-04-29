@@ -1,7 +1,7 @@
 """
 EPDP UFAM - Radar Regulatório Automático
 =========================================
-Monitor diário de publicações oficiais (DOU/STF/STJ via LexML, ANPD, CGU, MGI, TCU)
+Monitor diário de publicações oficiais (Agência Brasil/EBC)
 focado em LGPD, IA, Governança de Dados e Decisões Governamentais.
 
 Uso: python monitor_dpo.py
@@ -72,14 +72,13 @@ QUERY_LEXML = (
 ENCODED_LEXML = urllib.parse.quote_plus(QUERY_LEXML)
 
 FEEDS: dict[str, str] = {
-    "ANPD (Oficial)": "https://www.gov.br/anpd/pt-br/assuntos/noticias/RSS",
-    "CGU (Transparência)": "https://www.gov.br/cgu/pt-br/assuntos/noticias/RSS",
-    "MGI (Governo Digital)": "https://www.gov.br/gestao/pt-br/assuntos/noticias/RSS",
-    "TCU (Contas e Gov)": (
-        "https://portal.tcu.gov.br/lumis/portal/feed/rss.jsp"
-        "?idServiceInstance=8A8182604C749B0E014C794A6E823616"
-    ),
-    "Diário Oficial / LexML": f"https://www.lexml.gov.br/busca/srss?q={ENCODED_LEXML}",
+    # Agência Brasil (EBC) - Feeds confiáveis e estáveis
+    # EBC: https://agenciabrasil.ebc.com.br/feeds
+    "EBC - Justiça": "https://agenciabrasil.ebc.com.br/rss/justica/feed.xml",
+    "EBC - Política": "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml",
+    "EBC - Economia": "https://agenciabrasil.ebc.com.br/rss/economia/feed.xml",
+    "EBC - Educação": "https://agenciabrasil.ebc.com.br/rss/educacao/feed.xml",
+    "EBC - Geral": "https://agenciabrasil.ebc.com.br/rss/geral/feed.xml",
 }
 
 HEADERS = {
@@ -297,7 +296,7 @@ def monitorar() -> None:
     console.print(
         Panel(
             f"[bold green]EPDP UFAM • Radar Regulatório Automático[/bold green]\n"
-            f"[white]LexML (DOU/STF/STJ) + ANPD + CGU + MGI + TCU\n"
+            f"[white]Fontes: Agência Brasil (EBC) - Justiça, Política, Economia, Educação\n"
             f"Janela: últimos [cyan]{DIAS_RETROSPECTIVA}[/cyan] dias  •  "
             f"Base atual: [cyan]{len(banco)}[/cyan] registros[/white]",
             border_style="green",
@@ -351,7 +350,7 @@ def monitorar() -> None:
     console.print(tabela)
 
     for o, e in erros.items():
-        console.print(f"[red]✗ {o}[/red]: {e}")
+        console.print(f"[red]X {o}[/red]: {e}")
 
     # Mescla, deduplica, filtra por janela e ordena
     todas = banco + novos
@@ -429,7 +428,7 @@ def salvar_e_abrir(achados: list[dict], qtd_novos: int, dias: int) -> None:
     gerar_dashboard(achados, dias)
 
     console.print(
-        f"\n[bold green]✔[/bold green] Concluído! "
+        f"\n[bold green]OK[/bold green] Concluído! "
         f"[cyan]{len(achados)}[/cyan] documentos na base "
         f"([green]+{qtd_novos}[/green] novos nesta execução)."
     )
