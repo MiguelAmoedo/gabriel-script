@@ -1,0 +1,5 @@
+feedparser>=6.0.10
+requests>=2.31.0
+beautifulsoup4>=4.12.2
+rich>=13.7.0
+urllib3>=2.0.7
